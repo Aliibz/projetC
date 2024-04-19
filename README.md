@@ -1,2 +1,3 @@
 # projetC
-Repo du projet en C pour l'EFREI fait par Ali Ibnou Zahir et Arthur Hacques
+Fait par Ali Ibnou Zahir et Arthur Hacques.
+CDataframe est une bibliothèque C pour la gestion de données tabulaires avec des fonctions pour créer, modifier et afficher des colonnes de données.
