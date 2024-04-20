@@ -1,5 +1,6 @@
 #include <stdlib.h>
 
+
 typedef struct {
     char* titre;
     int taille_physique;
