@@ -54,5 +54,3 @@ dkms.conf
 cmake-build-debug/
 *.iml
 CMakeLists.txt
-# Portable Network Graphics
-*.png
