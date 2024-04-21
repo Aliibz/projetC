@@ -54,3 +54,4 @@ dkms.conf
 cmake-build-debug/
 *.iml
 CMakeLists.txt
+*.png
