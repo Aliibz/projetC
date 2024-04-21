@@ -3,14 +3,17 @@
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
+  <component name="CMakePresetLoader"><![CDATA[{
+  "useNewFormat": true
+}]]></component>
   <component name="CMakeSettings">
     <configurations>
       <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="55adb0d2-158f-4ca4-a434-3470a88a9f82" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/main.c" afterDir="false" />
+    <list default="true" id="ff2fab49-5d0c-4f8f-8d16-a4cb77a85512" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/maine.c" beforeDir="false" afterPath="$PROJECT_DIR$/maine.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,6 +23,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -64,18 +68,14 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="55adb0d2-158f-4ca4-a434-3470a88a9f82" name="Changes" comment="" />
-      <created>1713552367331</created>
+      <changelist id="ff2fab49-5d0c-4f8f-8d16-a4cb77a85512" name="Changes" comment="" />
+      <created>1713706380279</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1713552367331</updated>
-      <workItem from="1713552368902" duration="290000" />
-      <workItem from="1713557834414" duration="1033000" />
-      <workItem from="1713558885050" duration="1054000" />
-      <workItem from="1713560079055" duration="23000" />
-      <workItem from="1713560109639" duration="32000" />
-      <workItem from="1713708382106" duration="756000" />
-      <workItem from="1713719912967" duration="168000" />
+      <updated>1713706380279</updated>
+      <workItem from="1713706381452" duration="11551000" />
+      <workItem from="1713718149199" duration="116000" />
+      <workItem from="1713718299091" duration="3542000" />
     </task>
     <servers />
   </component>
