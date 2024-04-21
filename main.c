@@ -1,112 +1,58 @@
+#include "column.h"
+#include "cdataframe.h"
+
+#include "alimentation/creat_cdataframe.h"
+#include "analyse/return_value.h"
+#include "affichage/display_cdataframe.h"
+#include "operations/usual_op.h"
+#include <stdio.h>
 #include <stdlib.h>
 
 
-typedef struct {
-    char* titre;
-    int taille_physique;
-    int taille_logique;
-    int* donnees;
-} COLUMN;
+int main() {
 
-// Fonction pour copier une chaîne de caractères
-char* copier_chaine(const char* chaine) {
-    int longueur = 0;
-    while (chaine[longueur] != '\0') longueur++;
-    char* copie = (char*)malloc(sizeof(char) * (longueur + 1));
-    if (copie == NULL) {
-        return NULL; // Échec de l'allocation
-    }
+    int choix, running = 1;
+    CDataframe *dataframe = create_empty_dataframe(3);  // Crée un dataframe avec 3 colonnes
 
-    for (int i = 0; i <= longueur; i++) {
-        copie[i] = chaine[i];
-    }
+    while (running) {
+        printf("Menu :\n");
+        printf("1. Remplir DataFrame avec saisie utilisateur\n");
+        printf("2. Remplir DataFrame avec valeurs prédéfinies\n");
+        printf("3. Afficher DataFrame complet\n");
+        printf("4. Afficher parties des lignes du DataFrame\n");
+        printf("5. Afficher parties des colonnes du DataFrame\n");
+        printf("6. Quitter\n");
+        printf("Entrer votre choix : ");
+        scanf("%d", &choix);
 
-    return copie;
-}
-
-COLUMN* create_column(const char* titre) {
-    COLUMN* colonne ) (COLUMN*)malloc(sizeof(COLUMN));
-    if (colonne == NULL) {
-        return NULL }
-    colonne->titre = copier_chaine(titre);
-    if (colonne->titre == NULL) {
-        free(colonne);
-        return NULL;
-        // Initialisation de la taille physique à 256 et de la taille logique à 0
-        colonne->taille_physique = 256;
-        colonne->taille_logique = 0;
-        // Initialisation du pointeur de données à NULL
-        colonne->donnees = NULL
-        return colonne;
-    }
-}
-
-int insert_value(COLUMN* col, int valeur) {
-        // Vérifie si l'espace est disponible
-        if (col->taille_logique == col->taille_physique) {
-            int* nouvel_espace = realloc(col->donnees, (col->taille_physique + 256) * sizeof(int));
-            if (nouvel_espace == NULL) {
-                return 0
-            }
-            col->donnees = nouvel_espace;
-            col->taille_physique += 256;
+        switch (choix) {
+            case 1:
+                fill_dataframe_from_user_input(dataframe);
+            break;
+            case 2:
+                fill_dataframe_with_predefined_values(dataframe);
+            break;
+            case 3:
+                print_dataframe(dataframe);
+            break;
+            case 4:
+                printf("Entrer la limite de lignes à afficher : ");
+            int limite_lignes;
+            scanf("%d", &limite_lignes);
+            print_partial_rows(dataframe, limite_lignes);
+            break;
+            case 5:
+                printf("Entrer la limite de colonnes à afficher : ");
+            int limite_colonnes;
+            scanf("%d", &limite_colonnes);
+            print_partial_columns(dataframe, limite_colonnes);
+            break;
+            case 6:
+                running = 0;
+            break;
+            default:
+                printf("Choix non valide, veuillez réessayer.\n");
         }
-        col->donnees[col->taille_logique] = valeur;
-        col->taille_logique++;
-        return 1;
-}
-
-void delete_column(COLUMN** col) {
-    // Libère la mémoire allouée pour les données de la colonne, si elle existe.
-    if ((*col)->donnees != NULL) {
-        free((*col)->donnees);
     }
-    // Libère la mémoire allouée pour le titre de la colonne, si elle existe.
-    if ((*col)->titre != NULL) {
-        free((*col)->titre);
-    }
-    free(*col);
-    *col = NULL;
+    return 0;
 }
-void print_col(COLUMN* col) {
-    for (int i = 0; i < col->taille_logique; ++i) {
-        printf("[%d] %d\n", i, col->donnees[i]);
-    }
-}
-
-
-// Retourne le nombre d'occurrences d'une valeur x dans la colonne
-int count_value(COLUMN* col, int x) {
-    int count = 0;
-    for (int i = 0; i < col->taille_logique; i++) {
-        if (col->donnees[i] == x) count++;
-    }
-    return count;
-}
-
-// Retourne la valeur à la position x dans la colonne
-int value_at(COLUMN* col, int x) {
-    if (x >= 0 && x < col->taille_logique) {
-        return col->donnees[x];
-    } else {
-        printf("Index hors des limites\n");
-        return -1;
-    }
-}
-// Retourne le nombre de valeurs supérieures à x dans la colonne
-int count_greater(COLUMN* col, int x) {
-    int count = 0;
-    for (int i = 0; i < col->taille_logique; i++) {
-        if (col->donnees[i] > x) count++;
-    }
-    return count;
-}
-// Retourne le nombre de valeurs inférieures à x dans la colonne
-int count_less(COLUMN* col, int x) {
-    int count = 0;
-    for (int i = 0; i < col->taille_logique; i++) {
-        if (col->donnees[i] < x) count++;
-    }
-    return count;
-}
-
