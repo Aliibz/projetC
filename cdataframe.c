@@ -35,7 +35,7 @@ CDataframe* create_empty_dataframe(int nombre_colonnes) {
 // Fonction pour remplir un CDataframe à partir de saisies utilisateur
 void fill_dataframe_from_user_input(CDataframe* dataframe) {
     for (int i = 0; i < dataframe->nombre_colonnes; i++) {
-        printf("Saisir les données pour la colonne %s :\n", dataframe->colonnes[i]->titre);
+        printf("Saisir les donnees pour la colonne %s :\n", dataframe->colonnes[i]->titre);
         for (int j = 0; j < dataframe->colonnes[i]->taille_physique; j++) {
             int valeur;
             printf("Saisir la valeur %d : ", j + 1);
@@ -184,3 +184,4 @@ void print_column_names(CDataframe* dataframe) {
         printf("%s\n", dataframe->colonnes[i]->titre);
     }
 }
+*/
