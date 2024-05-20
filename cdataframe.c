@@ -14,7 +14,7 @@ CDataframe* create_empty_dataframe(int nombre_colonnes) {
     }
     for (int i = 0; i < nombre_colonnes; i++) {
         char titre_default[20];
-        sprintf(titre_default, "Colonne%d", i); // Cree un titre par defaut pour chaque colonne
+        sprintf(titre_default, "%d", i); // Cree un titre par defaut pour chaque colonne
         dataframe->colonnes[i] = create_column(INT, titre_default); // Cree chaque colonne avec un type par defaut
         if (dataframe->colonnes[i] == NULL) {
             for (int j = 0; j < i; j++) {
