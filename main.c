@@ -1,8 +1,6 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include "cdataframe.h"
-#include "alimentation/creat_cdataframe.h"
-#include "analyse/return_value.h"
-#include "affichage/display_cdataframe.h"
-#include "operations/usual_op.h"
 
 void print_menu() {
     printf("\nMenu:\n");
@@ -25,7 +23,13 @@ void print_menu() {
     printf("17. Compter les cellules egales a une valeur\n");
     printf("18. Compter les cellules superieures a une valeur\n");
     printf("19. Compter les cellules inferieures a une valeur\n");
-    printf("20. Quitter\n");
+    printf("20. Effacer l'index d'une colonne\n");
+    printf("21. Verifier l'index d'une colonne\n");
+    printf("22. Mettre a jour l'index d'une colonne\n");
+    printf("23. Rechercher une valeur dans une colonne\n");
+    printf("24. Trier une colonne\n");
+    printf("25. Afficher une colonne par index\n");
+    printf("26. Quitter\n");
     printf("Entrez votre choix: ");
 }
 
@@ -63,11 +67,13 @@ int main() {
                 break;
             }
             case 6: {
-                int values[nombre_colonnes];
+                COL_TYPE values[nombre_colonnes];
                 printf("Entrez les valeurs pour la nouvelle ligne:\n");
                 for (int i = 0; i < nombre_colonnes; i++) {
                     printf("Valeur pour la colonne %d: ", i);
-                    scanf("%d", &values[i]);
+                    if (dataframe->colonnes[i]->type_donnees == INT) {
+                        scanf("%d", &values[i].int_value);
+                    }
                 }
                 add_row(dataframe, values);
                 break;
@@ -83,7 +89,10 @@ int main() {
                 char titre[50];
                 printf("Entrez le titre de la nouvelle colonne: ");
                 scanf("%s", titre);
-                add_column(dataframe, titre);
+                printf("Entrez le type de la nouvelle colonne (1-NULLVAL, 2-UINT, 3-INT, 4-CHAR, 5-FLOAT, 6-DOUBLE, 7-STRING, 8-STRUCTURE): ");
+                int type;
+                scanf("%d", &type);
+                add_column(dataframe, (ENUM_TYPE)type, titre);
                 break;
             }
             case 9: {
@@ -104,9 +113,11 @@ int main() {
                 break;
             }
             case 11: {
-                printf("Entrez la valeur a verifier: ");
-                int value;
-                scanf("%d", &value);
+                COL_TYPE value;
+                if (dataframe->colonnes[0]->type_donnees == INT) {
+                    printf("Entrez la valeur a verifier (entier): ");
+                    scanf("%d", &value.int_value);
+                }
                 if (value_exists(dataframe, value)) {
                     printf("La valeur existe dans le DataFrame.\n");
                 } else {
@@ -120,12 +131,9 @@ int main() {
                 scanf("%d", &row);
                 printf("Entrez l'index de la colonne: ");
                 int col;
-                scanf("%d", &col);
-                int value = get_cell_value(dataframe, row, col);
-                if (value != -1) {
-                    printf("La valeur a la cellule (%d, %d) est %d.\n", row, col, value);
-                } else {
-                    printf("Cellule invalide.\n");
+                COL_TYPE value = get_cell_value(dataframe, row, col);
+                if (dataframe->colonnes[col]->type_donnees == INT) {
+                    printf("La valeur a la cellule (%d, %d) est %d.\n", row, col, value.int_value);
                 }
                 break;
             }
@@ -135,10 +143,11 @@ int main() {
                 scanf("%d", &row);
                 printf("Entrez l'index de la colonne: ");
                 int col;
-                scanf("%d", &col);
-                printf("Entrez la nouvelle valeur: ");
-                int value;
-                scanf("%d", &value);
+                COL_TYPE value;
+                if (dataframe->colonnes[col]->type_donnees == INT) {
+                    printf("Entrez la nouvelle valeur (entier): ");
+                    scanf("%d", &value.int_value);
+                }
                 set_cell_value(dataframe, row, col, value);
                 break;
             }
@@ -152,27 +161,88 @@ int main() {
                 print_col_count(dataframe);
                 break;
             case 17: {
-                printf("Entrez la valeur a compter: ");
-                int x;
-                scanf("%d", &x);
+                COL_TYPE x;
+                if (dataframe->colonnes[0]->type_donnees == INT) {
+                    printf("Entrez la valeur a compter (entier): ");
+                    scanf("%d", &x.int_value);
+                }
                 count_cells_equal_to_x(dataframe, x);
                 break;
             }
             case 18: {
-                printf("Entrez la valeur a comparer: ");
-                int x;
-                scanf("%d", &x);
+                COL_TYPE x;
+                if (dataframe->colonnes[0]->type_donnees == INT) {
+                    printf("Entrez la valeur a comparer (entier): ");
+                    scanf("%d", &x.int_value);
+                }
                 count_cells_greater_than_x(dataframe, x);
                 break;
             }
             case 19: {
-                printf("Entrez la valeur a comparer: ");
-                int x;
-                scanf("%d", &x);
+                COL_TYPE x;
+                if (dataframe->colonnes[0]->type_donnees == INT) {
+                    printf("Entrez la valeur a comparer (entier): ");
+                    scanf("%d", &x.int_value);
+                }
                 count_cells_less_than_x(dataframe, x);
                 break;
             }
-            case 20:
+            case 20: {
+                printf("Entrez l'index de la colonne pour effacer l'index: ");
+                int index;
+                scanf("%d", &index);
+                erase_index(dataframe->colonnes[index]);
+                printf("Index efface pour la colonne %d.\n", index);
+                break;
+            }
+            case 21: {
+                printf("Entrez l'index de la colonne pour verifier l'index: ");
+                int index;
+                scanf("%d", &index);
+                int valid = check_index(dataframe->colonnes[index]);
+                printf("L'index de la colonne %d est %s.\n", index, valid ? "valide" : "non valide");
+                break;
+            }
+            case 22: {
+                printf("Entrez l'index de la colonne pour mettre a jour l'index: ");
+                int index;
+                scanf("%d", &index);
+                update_index(dataframe->colonnes[index]);
+                printf("Index mis a jour pour la colonne %d.\n", index);
+                break;
+            }
+            case 23: {
+                printf("Entrez l'index de la colonne pour rechercher la valeur: ");
+                int index;
+                scanf("%d", &index);
+                COL_TYPE val;
+                if (dataframe->colonnes[index]->type_donnees == INT) {
+                    printf("Entrez la valeur (entier): ");
+                    scanf("%d", &val.int_value);
+                }
+                int result = search_value_in_column(dataframe->colonnes[index], &val);
+                printf("Resultat de la recherche: %d\n", result);
+                break;
+            }
+            case 24: {
+                printf("Entrez l'index de la colonne a trier: ");
+                int index;
+                scanf("%d", &index);
+                printf("Entrez l'ordre de tri (0 pour ASC, 1 pour DESC): ");
+                int sort_dir;
+                scanf("%d", &sort_dir);
+                sort(dataframe->colonnes[index], sort_dir);
+                printf("Colonne %d triee.\n", index);
+                break;
+            }
+            case 25: {
+                printf("Entrez l'index de la colonne aa afficher par index: ");
+                int index;
+                scanf("%d", &index);
+                print_col_by_index(dataframe->colonnes[index]);
+                break;
+            }
+            case 26:
                 running = 0;
                 break;
             default:
