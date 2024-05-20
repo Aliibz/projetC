@@ -1,8 +1,15 @@
+/*
+Nom du projet : Gestion de DataFrame en C
+Auteurs : Ali Ibnou Zahir et Arthur Hacques
+Rôle : Ce fichier contient la fonction principale et l'interface utilisateur pour interagir avec le DataFrame.
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "cdataframe.h"
 
-void print_menu() {
+/* Affiche le menu principal */
+void afficher_menu() {
     printf("\nMenu:\n");
     printf("1. Remplir DataFrame avec saisie utilisateur\n");
     printf("2. Remplir DataFrame avec valeurs predefinies\n");
@@ -34,55 +41,59 @@ void print_menu() {
 }
 
 int main() {
-    int choix, running = 1;
+    int choix, en_cours = 1;
     int nombre_colonnes = 3;
-    CDataframe *dataframe = create_empty_dataframe(nombre_colonnes);
+    CDataframe *dataframe = creer_dataframe_vide(nombre_colonnes);
 
-    while (running) {
-        print_menu();
+    while (en_cours) {
+        afficher_menu();
         scanf("%d", &choix);
 
         switch (choix) {
             case 1:
-                fill_dataframe_from_user_input(dataframe);
+                printf("\n");
+                remplir_dataframe_utilisateur(dataframe);
                 break;
             case 2:
-                fill_dataframe_with_predefined_values(dataframe);
+                printf("\n");
+                remplir_dataframe_valeurs_predefinies(dataframe);
                 break;
             case 3:
-                print_dataframe(dataframe);
+                printf("\n");
+                afficher_dataframe(dataframe);
                 break;
             case 4: {
+                printf("\n");
                 printf("Entrer la limite de lignes a afficher: ");
                 int limite_lignes;
                 scanf("%d", &limite_lignes);
-                print_partial_rows(dataframe, limite_lignes);
+                afficher_lignes_partielles(dataframe, limite_lignes);
                 break;
             }
             case 5: {
                 printf("Entrer la limite de colonnes a afficher: ");
                 int limite_colonnes;
                 scanf("%d", &limite_colonnes);
-                print_partial_columns(dataframe, limite_colonnes);
+                afficher_colonnes_partielles(dataframe, limite_colonnes);
                 break;
             }
             case 6: {
-                COL_TYPE values[nombre_colonnes];
+                COL_TYPE valeurs[nombre_colonnes];
                 printf("Entrez les valeurs pour la nouvelle ligne:\n");
                 for (int i = 0; i < nombre_colonnes; i++) {
                     printf("Valeur pour la colonne %d: ", i);
-                    if (dataframe->colonnes[i]->type_donnees == INT) {
-                        scanf("%d", &values[i].int_value);
+                    if (((COLONNE *)obtenir_premier_noeud(dataframe)->data)->type_donnees == INT) {
+                        scanf("%d", &valeurs[i].int_value);
                     }
                 }
-                add_row(dataframe, values);
+                ajouter_ligne(dataframe, valeurs);
                 break;
             }
             case 7: {
                 printf("Entrez l'index de la ligne a supprimer: ");
                 int index;
                 scanf("%d", &index);
-                remove_row(dataframe, index);
+                supprimer_ligne(dataframe, index);
                 break;
             }
             case 8: {
@@ -92,33 +103,33 @@ int main() {
                 printf("Entrez le type de la nouvelle colonne (1-NULLVAL, 2-UINT, 3-INT, 4-CHAR, 5-FLOAT, 6-DOUBLE, 7-STRING, 8-STRUCTURE): ");
                 int type;
                 scanf("%d", &type);
-                add_column(dataframe, (ENUM_TYPE)type, titre);
+                ajouter_colonne(dataframe, (ENUM_TYPE)type, titre);
                 break;
             }
             case 9: {
-                printf("Entrez l'index de la colonne a supprimer: ");
-                int index;
-                scanf("%d", &index);
-                remove_column(dataframe, index);
+                char nom_colonne[50];
+                printf("Entrez le nom de la colonne a supprimer: ");
+                scanf("%s", nom_colonne);
+                supprimer_colonne_dataframe(dataframe, nom_colonne);
                 break;
             }
             case 10: {
                 printf("Entrez l'index de la colonne a renommer: ");
                 int index;
                 scanf("%d", &index);
-                char new_title[50];
+                char nouveau_titre[50];
                 printf("Entrez le nouveau titre de la colonne: ");
-                scanf("%s", new_title);
-                rename_column(dataframe, index, new_title);
+                scanf("%s", nouveau_titre);
+                renommer_colonne(dataframe, index, nouveau_titre);
                 break;
             }
             case 11: {
-                COL_TYPE value;
-                if (dataframe->colonnes[0]->type_donnees == INT) {
+                COL_TYPE valeur;
+                if (((COLONNE *)obtenir_premier_noeud(dataframe)->data)->type_donnees == INT) {
                     printf("Entrez la valeur a verifier (entier): ");
-                    scanf("%d", &value.int_value);
+                    scanf("%d", &valeur.int_value);
                 }
-                if (value_exists(dataframe, value)) {
+                if (valeur_existe(dataframe, valeur)) {
                     printf("La valeur existe dans le DataFrame.\n");
                 } else {
                     printf("La valeur n'existe pas dans le DataFrame.\n");
@@ -127,101 +138,131 @@ int main() {
             }
             case 12: {
                 printf("Entrez l'index de la ligne: ");
-                int row;
-                scanf("%d", &row);
+                int ligne;
+                scanf("%d", &ligne);
                 printf("Entrez l'index de la colonne: ");
                 int col;
-                COL_TYPE value = get_cell_value(dataframe, row, col);
-                if (dataframe->colonnes[col]->type_donnees == INT) {
-                    printf("La valeur a la cellule (%d, %d) est %d.\n", row, col, value.int_value);
+                scanf("%d", &col);
+                COL_TYPE valeur = obtenir_valeur_cellule(dataframe, ligne, col);
+                if (((COLONNE *)obtenir_premier_noeud(dataframe)->data)->type_donnees == INT) {
+                    printf("La valeur a la cellule (%d, %d) est %d.\n", ligne, col, valeur.int_value);
                 }
                 break;
             }
             case 13: {
                 printf("Entrez l'index de la ligne: ");
-                int row;
-                scanf("%d", &row);
+                int ligne;
+                scanf("%d", &ligne);
                 printf("Entrez l'index de la colonne: ");
                 int col;
-                COL_TYPE value;
-                if (dataframe->colonnes[col]->type_donnees == INT) {
+                scanf("%d", &col);
+                COL_TYPE valeur;
+                if (((COLONNE *)obtenir_premier_noeud(dataframe)->data)->type_donnees == INT) {
                     printf("Entrez la nouvelle valeur (entier): ");
-                    scanf("%d", &value.int_value);
+                    scanf("%d", &valeur.int_value);
                 }
-                set_cell_value(dataframe, row, col, value);
+                definir_valeur_cellule(dataframe, ligne, col, valeur);
                 break;
             }
             case 14:
-                print_column_names(dataframe);
+                printf("\n");
+                afficher_noms_colonnes(dataframe);
                 break;
             case 15:
-                print_row_count(dataframe);
+                printf("\n");
+                afficher_nombre_lignes(dataframe);
                 break;
             case 16:
-                print_col_count(dataframe);
+                printf("\n");
+                afficher_nombre_colonnes(dataframe);
                 break;
             case 17: {
                 COL_TYPE x;
-                if (dataframe->colonnes[0]->type_donnees == INT) {
+                if (((COLONNE *)obtenir_premier_noeud(dataframe)->data)->type_donnees == INT) {
                     printf("Entrez la valeur a compter (entier): ");
                     scanf("%d", &x.int_value);
                 }
-                count_cells_equal_to_x(dataframe, x);
+                compter_cellules_egales_a(dataframe, x);
                 break;
             }
             case 18: {
                 COL_TYPE x;
-                if (dataframe->colonnes[0]->type_donnees == INT) {
+                if (((COLONNE *)obtenir_premier_noeud(dataframe)->data)->type_donnees == INT) {
                     printf("Entrez la valeur a comparer (entier): ");
                     scanf("%d", &x.int_value);
                 }
-                count_cells_greater_than_x(dataframe, x);
+                compter_cellules_superieures_a(dataframe, x);
                 break;
             }
             case 19: {
                 COL_TYPE x;
-                if (dataframe->colonnes[0]->type_donnees == INT) {
+                if (((COLONNE *)obtenir_premier_noeud(dataframe)->data)->type_donnees == INT) {
                     printf("Entrez la valeur a comparer (entier): ");
                     scanf("%d", &x.int_value);
                 }
-                count_cells_less_than_x(dataframe, x);
+                compter_cellules_inferieures_a(dataframe, x);
                 break;
             }
             case 20: {
                 printf("Entrez l'index de la colonne pour effacer l'index: ");
                 int index;
                 scanf("%d", &index);
-                erase_index(dataframe->colonnes[index]);
-                printf("Index efface pour la colonne %d.\n", index);
+                noeud *current = obtenir_premier_noeud(dataframe);
+                for (int i = 0; i < index && current != NULL; i++) {
+                    current = obtenir_noeud_suivant(dataframe, current);
+                }
+                if (current != NULL) {
+                    effacer_index((COLONNE *)current->data);
+                    printf("Index efface pour la colonne %d.\n", index);
+                }
                 break;
             }
             case 21: {
                 printf("Entrez l'index de la colonne pour verifier l'index: ");
                 int index;
                 scanf("%d", &index);
-                int valid = check_index(dataframe->colonnes[index]);
-                printf("L'index de la colonne %d est %s.\n", index, valid ? "valide" : "non valide");
+                noeud *current = obtenir_premier_noeud(dataframe);
+                for (int i = 0; i < index && current != NULL; i++) {
+                    current = obtenir_noeud_suivant(dataframe, current);
+                }
+                if (current != NULL) {
+                    int valid = verifier_index((COLONNE *)current->data);
+                    printf("L'index de la colonne %d est %s.\n", index, valid ? "valide" : "non valide");
+                }
                 break;
             }
             case 22: {
                 printf("Entrez l'index de la colonne pour mettre a jour l'index: ");
                 int index;
                 scanf("%d", &index);
-                update_index(dataframe->colonnes[index]);
-                printf("Index mis a jour pour la colonne %d.\n", index);
+                noeud *current = obtenir_premier_noeud(dataframe);
+                for (int i = 0; i < index && current != NULL; i++) {
+                    current = obtenir_noeud_suivant(dataframe, current);
+                }
+                if (current != NULL) {
+                    mettre_a_jour_index((COLONNE *)current->data);
+                    printf("Index mis a jour pour la colonne %d.\n", index);
+                }
                 break;
             }
             case 23: {
                 printf("Entrez l'index de la colonne pour rechercher la valeur: ");
                 int index;
                 scanf("%d", &index);
-                COL_TYPE val;
-                if (dataframe->colonnes[index]->type_donnees == INT) {
-                    printf("Entrez la valeur (entier): ");
-                    scanf("%d", &val.int_value);
+                noeud *current = obtenir_premier_noeud(dataframe);
+                for (int i = 0; i < index && current != NULL; i++) {
+                    current = obtenir_noeud_suivant(dataframe, current);
                 }
-                int result = search_value_in_column(dataframe->colonnes[index], &val);
-                printf("Resultat de la recherche: %d\n", result);
+                if (current != NULL) {
+                    COL_TYPE val;
+                    COLONNE *col = (COLONNE *)current->data;
+                    if (col->type_donnees == INT) {
+                        printf("Entrez la valeur (entier): ");
+                        scanf("%d", &val.int_value);
+                    }
+                    int result = rechercher_valeur_dans_colonne(col, &val);
+                    printf("Resultat de la recherche: %d\n", result);
+                }
                 break;
             }
             case 24: {
@@ -229,32 +270,40 @@ int main() {
                 int index;
                 scanf("%d", &index);
                 printf("Entrez l'ordre de tri (0 pour ASC, 1 pour DESC): ");
-                int sort_dir;
-                scanf("%d", &sort_dir);
-                sort(dataframe->colonnes[index], sort_dir);
-                printf("Colonne %d triee.\n", index);
+                int direction_tri;
+                scanf("%d", &direction_tri);
+                noeud *current = obtenir_premier_noeud(dataframe);
+                for (int i = 0; i < index && current != NULL; i++) {
+                    current = obtenir_noeud_suivant(dataframe, current);
+                }
+                if (current != NULL) {
+                    trier((COLONNE *)current->data, direction_tri);
+                    printf("Colonne %d triee.\n", index);
+                }
                 break;
             }
             case 25: {
-                printf("Entrez l'index de la colonne aa afficher par index: ");
+                printf("Entrez l'index de la colonne a afficher par index: ");
                 int index;
                 scanf("%d", &index);
-                print_col_by_index(dataframe->colonnes[index]);
+                noeud *current = obtenir_premier_noeud(dataframe);
+                for (int i = 0; i < index && current != NULL; i++) {
+                    current = obtenir_noeud_suivant(dataframe, current);
+                }
+                if (current != NULL) {
+                    afficher_colonne_par_index((COLONNE *)current->data);
+                }
                 break;
             }
             case 26:
-                running = 0;
+                en_cours = 0;
                 break;
             default:
                 printf("Choix non valide, veuillez reessayer.\n");
         }
     }
 
-    for (int i = 0; i < dataframe->nombre_colonnes; i++) {
-        delete_column(&(dataframe->colonnes[i]));
-    }
-    free(dataframe->colonnes);
-    free(dataframe);
+    supprimer_dataframe(&dataframe);
 
     return 0;
 }

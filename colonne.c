@@ -1,71 +1,77 @@
-#include "column.h"
+/*
+Nom du projet : Gestion de DataFrame en C
+Auteurs : Ali Ibnou Zahir et Arthur Hacques
+Rôle : Ce fichier contient les fonctions pour gerer les colonnes d'un DataFrame.
+*/
+
+#include "colonne.h"
 #include <string.h>
 #include <stdio.h>
 
-// Copie une chaîne de caractères
+/* Copie une chaîne de caracteres */
 char* copier_chaine(const char* chaine) {
     int longueur = 0;
-    while (chaine[longueur] != '\0') longueur++; // Calcule la longueur de la chaîne
-    char* copie = (char*)malloc(sizeof(char) * (longueur + 1)); // Alloue de la memoire pour la copie
+    while (chaine[longueur] != '\0') longueur++;
+    char* copie = (char*)malloc(sizeof(char) * (longueur + 1));
     if (copie == NULL) {
-        return NULL; // Verifie l'allocation de memoire
+        return NULL;
     }
     for (int i = 0; i <= longueur; i++) {
-        copie[i] = chaine[i]; // Copie la chaîne
+        copie[i] = chaine[i];
     }
     return copie;
 }
 
-// Cree une colonne avec un type et un titre specifies
-COLUMN* create_column(ENUM_TYPE type, const char* titre) {
-    COLUMN* colonne = (COLUMN*)malloc(sizeof(COLUMN)); // Alloue de la memoire pour la colonne
+/* Cree une colonne avec un type de donnees specifique et un titre */
+COLONNE* creer_colonne(ENUM_TYPE type, const char* titre) {
+    COLONNE* colonne = (COLONNE*)malloc(sizeof(COLONNE));
     if (colonne == NULL) {
         return NULL;
     }
-    colonne->titre = copier_chaine(titre); // Copie le titre
+    colonne->titre = copier_chaine(titre);
     if (colonne->titre == NULL) {
-        free(colonne); // Libère la memoire si l'allocation echoue
+        free(colonne);
         return NULL;
     }
-    colonne->taille_physique = 256; // Initialise la taille physique
-    colonne->taille_logique = 0; // Initialise la taille logique
-    colonne->type_donnees = type; // Initialise le type de donnees
-    colonne->donnees = (COL_TYPE*)calloc(colonne->taille_physique, sizeof(COL_TYPE)); // Alloue de la memoire pour les donnees
+    colonne->taille_physique = 256;
+    colonne->taille_logique = 0;
+    colonne->type_donnees = type;
+    colonne->donnees = (COL_TYPE*)calloc(colonne->taille_physique, sizeof(COL_TYPE));
     if (colonne->donnees == NULL) {
         free(colonne->titre);
         free(colonne);
         return NULL;
     }
-    colonne->index = NULL; // Initialise l'index a NULL
-    colonne->valid_index = 0; // Initialise la validite de l'index a 0
-    colonne->sort_dir = 0; // Initialise la direction de tri a 0
+    colonne->index = NULL;
+    colonne->valid_index = 0;
+    colonne->direction_tri = 0;
     return colonne;
 }
 
-// Supprime une colonne
-void delete_column(COLUMN** col) {
+/* Supprime une colonne et libere la memoire associee */
+void supprimer_colonne(COLONNE** col) {
     if ((*col)->donnees != NULL) {
-        free((*col)->donnees); // Libère la memoire des donnees
+        free((*col)->donnees);
     }
     if ((*col)->titre != NULL) {
-        free((*col)->titre); // Libère la memoire du titre
+        free((*col)->titre);
     }
     if ((*col)->index != NULL) {
-        free((*col)->index); // Libère la memoire de l'index
+        free((*col)->index);
     }
-    free(*col); // Libère la memoire de la colonne
-    *col = NULL; // Met le pointeur de la colonne a NULL
+    free(*col);
+    *col = NULL;
 }
 
-// Insère une valeur dans une colonne
-int insert_value(COLUMN* col, void* valeur) {
+/* Insere une valeur dans une colonne */
+int inserer_valeur(COLONNE* col, void* valeur) {
     if (col->taille_logique == col->taille_physique) {
-        COL_TYPE* nouvel_espace = realloc(col->donnees, (col->taille_physique + 256) * sizeof(COL_TYPE)); // Realloue de la memoire si necessaire
+        COL_TYPE* nouvel_espace = realloc(col->donnees, (col->taille_physique + 256) * sizeof(COL_TYPE));
         if (nouvel_espace == NULL) {
-            return 0; // Verifie l'allocation de memoire
+            return 0;
         }
         col->donnees = nouvel_espace;
-        col->taille_physique += 256; // Augmente la taille physique
+        col->taille_physique += 256;
     }
     switch (col->type_donnees) {
         case UINT:
@@ -90,12 +96,12 @@ int insert_value(COLUMN* col, void* valeur) {
             return 0;
     }
     col->taille_logique++;
-    col->valid_index = 0; // Invalide l'index
+    col->valid_index = 0;
     return 1;
 }
 
-// Affiche une colonne
-void print_col(COLUMN* col) {
+/* Affiche le contenu d'une colonne */
+void afficher_colonne(COLONNE* col) {
     for (int i = 0; i < col->taille_logique; ++i) {
         switch (col->type_donnees) {
             case UINT:
@@ -125,8 +131,8 @@ void print_col(COLUMN* col) {
     }
 }
 
-// Compte le nombre de fois qu'une valeur apparaît dans une colonne
-int count_value(COLUMN* col, COL_TYPE x) {
+/* Compte le nombre de fois qu'une valeur apparaît dans une colonne */
+int compter_valeur(COLONNE* col, COL_TYPE x) {
     int count = 0;
     for (int i = 0; i < col->taille_logique; i++) {
         switch (col->type_donnees) {
@@ -158,20 +164,8 @@ int count_value(COLUMN* col, COL_TYPE x) {
     return count;
 }
 
-// Renvoie la valeur a un index donne
-COL_TYPE value_at(COLUMN* col, int x) {
-    if (x >= 0 && x < col->taille_logique) {
-        return col->donnees[x];
-    } else {
-        printf("Index hors des limites\n");
-        COL_TYPE null_value;
-        null_value.uint_value = 0;
-        return null_value;
-    }
-}
-
-// Compte le nombre de valeurs superieures a une valeur donnee
-int count_greater(COLUMN* col, COL_TYPE x) {
+/* Compte le nombre de valeurs superieures a une valeur donnee dans une colonne */
+int compter_superieur(COLONNE* col, COL_TYPE x) {
     int count = 0;
     for (int i = 0; i < col->taille_logique; i++) {
         switch (col->type_donnees) {
@@ -197,8 +191,8 @@ int count_greater(COLUMN* col, COL_TYPE x) {
     return count;
 }
 
-// Compte le nombre de valeurs inferieures a une valeur donnee
-int count_less(COLUMN* col, COL_TYPE x) {
+/* Compte le nombre de valeurs inferieures a une valeur donnee dans une colonne */
+int compter_inferieur(COLONNE* col, COL_TYPE x) {
     int count = 0;
     for (int i = 0; i < col->taille_logique; i++) {
         switch (col->type_donnees) {
@@ -224,8 +218,8 @@ int count_less(COLUMN* col, COL_TYPE x) {
     return count;
 }
 
-// Convertit une valeur en chaîne de caractères
-void convert_value(COLUMN* col, unsigned long long int i, char* str, int size) {
+/* Convertit une valeur a un format de chaîne de caracteres */
+void convertir_valeur(COLONNE* col, unsigned long long int i, char* str, int size) {
     switch (col->type_donnees) {
         case UINT:
             snprintf(str, size, "%u", col->donnees[i].uint_value);
@@ -253,8 +247,8 @@ void convert_value(COLUMN* col, unsigned long long int i, char* str, int size) {
     }
 }
 
-// Affiche une colonne en utilisant l'index
-void print_col_by_index(COLUMN* col) {
+/* Affiche une colonne en utilisant l'index */
+void afficher_colonne_par_index(COLONNE* col) {
     if (col->valid_index == 0) {
         printf("Index non valide.\n");
         return;
@@ -262,19 +256,67 @@ void print_col_by_index(COLUMN* col) {
     for (int i = 0; i < col->taille_logique; ++i) {
         unsigned long long int idx = col->index[i];
         char buffer[100];
-        convert_value(col, idx, buffer, 100);
+        convertir_valeur(col, idx, buffer, 100);
         printf("[%llu] %s\n", idx, buffer);
     }
 }
 
-// Trie une colonne
-void sort(COLUMN* col, int sort_dir) {
-    // Implementez le tri rapide ou le tri par insertion en fonction de la valeur de valid_index
-    // Mettez a jour valid_index et sort_dir en consequence
+/* Trie une colonne dans un ordre specifique */
+void trier(COLONNE* col, int direction_tri) {
+    if (col->taille_logique <= 1) {
+        return;
+    }
+
+    for (int i = 0; i < col->taille_logique - 1; i++) {
+        for (int j = 0; j < col->taille_logique - i - 1; j++) {
+            int should_swap = 0;
+            switch (col->type_donnees) {
+                case UINT:
+                    should_swap = (direction_tri == 0) ?
+                        (col->donnees[j].uint_value > col->donnees[j + 1].uint_value) :
+                        (col->donnees[j].uint_value < col->donnees[j + 1].uint_value);
+                    break;
+                case INT:
+                    should_swap = (direction_tri == 0) ?
+                        (col->donnees[j].int_value > col->donnees[j + 1].int_value) :
+                        (col->donnees[j].int_value < col->donnees[j + 1].int_value);
+                    break;
+                case FLOAT:
+                    should_swap = (direction_tri == 0) ?
+                        (col->donnees[j].float_value > col->donnees[j + 1].float_value) :
+                        (col->donnees[j].float_value < col->donnees[j + 1].float_value);
+                    break;
+                case DOUBLE:
+                    should_swap = (direction_tri == 0) ?
+                        (col->donnees[j].double_value > col->donnees[j + 1].double_value) :
+                        (col->donnees[j].double_value < col->donnees[j + 1].double_value);
+                    break;
+                case CHAR:
+                    should_swap = (direction_tri == 0) ?
+                        (col->donnees[j].char_value > col->donnees[j + 1].char_value) :
+                        (col->donnees[j].char_value < col->donnees[j + 1].char_value);
+                    break;
+                case STRING:
+                    should_swap = (direction_tri == 0) ?
+                        (strcmp(col->donnees[j].string_value, col->donnees[j + 1].string_value) > 0) :
+                        (strcmp(col->donnees[j].string_value, col->donnees[j + 1].string_value) < 0);
+                    break;
+                default:
+                    printf("Type non supporte pour le tri\n");
+                    return;
+            }
+            if (should_swap) {
+                COL_TYPE temp = col->donnees[j];
+                col->donnees[j] = col->donnees[j + 1];
+                col->donnees[j + 1] = temp;
+            }
+        }
+    }
+    mettre_a_jour_index(col);
 }
 
-// Efface l'index d'une colonne
-void erase_index(COLUMN* col) {
+/* Efface l'index d'une colonne */
+void effacer_index(COLONNE* col) {
     if (col->index != NULL) {
         free(col->index);
         col->index = NULL;
@@ -282,13 +324,13 @@ void erase_index(COLUMN* col) {
     col->valid_index = 0;
 }
 
-// Verifie la validite de l'index d'une colonne
-int check_index(COLUMN* col) {
+/* Verifie la validite de l'index d'une colonne */
+int verifier_index(COLONNE* col) {
     return col->valid_index;
 }
 
-// Met a jour l'index d'une colonne
-void update_index(COLUMN* col) {
+/* Met a jour l'index d'une colonne */
+void mettre_a_jour_index(COLONNE* col) {
     if (col->index != NULL) {
         free(col->index);
     }
@@ -299,24 +341,24 @@ void update_index(COLUMN* col) {
     col->valid_index = 1;
 }
 
-// Recherche une valeur dans une colonne trie
-int search_value_in_column(COLUMN* col, void* val) {
+/* Recherche une valeur specifique dans une colonne */
+int rechercher_valeur_dans_colonne(COLONNE* col, void* val) {
     if (col->valid_index != 1) {
         return -1;
     }
-    int left = 0;
-    int right = col->taille_logique - 1;
-    while (left <= right) {
-        int mid = left + (right - left) / 2;
-        COL_TYPE mid_val = col->donnees[col->index[mid]];
+    int gauche = 0;
+    int droite = col->taille_logique - 1;
+    while (gauche <= droite) {
+        int milieu = gauche + (droite - gauche) / 2;
+        COL_TYPE mid_val = col->donnees[col->index[milieu]];
         if (col->type_donnees == INT) {
-            int target = *(int*)val;
-            if (mid_val.int_value == target) {
+            int cible = *(int*)val;
+            if (mid_val.int_value == cible) {
                 return 1;
-            } else if (mid_val.int_value < target) {
-                left = mid + 1;
+            } else if (mid_val.int_value < cible) {
+                gauche = milieu + 1;
             } else {
-                right = mid - 1;
+                droite = milieu - 1;
             }
         }
     }
