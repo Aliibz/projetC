@@ -8,11 +8,6 @@ typedef struct {
     int* donnees;
 } COLUMN;
 
-typedef struct {
-    COLUMN** colonnes;
-    int nombre_colonnes;
-} CDataframe;
-
 char* copier_chaine(const char* chaine);
 
 COLUMN* create_column(const char* titre);
