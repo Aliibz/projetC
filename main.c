@@ -30,12 +30,12 @@ void afficher_menu() {
     printf("17. Compter les cellules egales a une valeur\n");
     printf("18. Compter les cellules superieures a une valeur\n");
     printf("19. Compter les cellules inferieures a une valeur\n");
-    printf("*20. Effacer l'index d'une colonne\n");
-    printf("*21. Verifier l'index d'une colonne\n");
-    printf("*22. Mettre a jour l'index d'une colonne\n");
-    printf("*23. Rechercher une valeur dans une colonne\n");
-    printf("*24. Trier une colonne\n");
-    printf("*25. Afficher une colonne par index\n");
+    printf("20. Effacer l'index d'une colonne\n");
+    printf("21. Verifier l'index d'une colonne\n");
+    printf("22. Mettre a jour l'index d'une colonne\n");
+    printf("23. Rechercher une valeur dans une colonne\n");
+    printf("24. Trier une colonne\n");
+    printf("25. Afficher une colonne par index\n");
     printf("26. Quitter\n");
     printf("Entrez votre choix: ");
 }

@@ -16,21 +16,10 @@ CDataframe* creer_dataframe_vide(int nombre_colonnes) {
     }
     for (int i = 0; i < nombre_colonnes; i++) {
         char titre_default[20];
-<<<<<<< HEAD
-        sprintf(titre_default, "%d", i); // Cree un titre par defaut pour chaque colonne
-        dataframe->colonnes[i] = create_column(INT, titre_default); // Cree chaque colonne avec un type par defaut
-        if (dataframe->colonnes[i] == NULL) {
-            for (int j = 0; j < i; j++) {
-                delete_column(&(dataframe->colonnes[j])); // Supprime les colonnes creees en cas d'echec
-            }
-            free(dataframe->colonnes);
-            free(dataframe);
-=======
         sprintf(titre_default, "Colonne%d", i);
         COLONNE *col = creer_colonne(INT, titre_default);
         if (col == NULL) {
             supprimer_dataframe(&dataframe);
->>>>>>> fa09b7da3c6ac97d79b9a55f3f2378d9f4287909
             return NULL;
         }
         noeud *node = liste_creer_noeud(col);
@@ -91,17 +80,6 @@ void supprimer_colonne_dataframe(CDataframe *cdf, char *nom_colonne) {
             current = current->suivant;
         }
     }
-}
-
-/* Retourne le nombre de colonnes dans le DataFrame */
-int obtenir_taille_colonnes(CDataframe *cdf) {
-    int count = 0;
-    noeud *current = cdf->tete;
-    while (current != NULL) {
-        count++;
-        current = current->suivant;
-    }
-    return count;
 }
 
 /* Remplit le DataFrame avec des valeurs saisies par l'utilisateur */

@@ -164,18 +164,6 @@ int compter_valeur(COLONNE* col, COL_TYPE x) {
     return count;
 }
 
-/* Retourne la valeur a un index specifique dans une colonne */
-COL_TYPE valeur_a(COLONNE* col, int x) {
-    if (x >= 0 && x < col->taille_logique) {
-        return col->donnees[x];
-    } else {
-        printf("Index hors des limites\n");
-        COL_TYPE null_value;
-        null_value.uint_value = 0;
-        return null_value;
-    }
-}
-
 /* Compte le nombre de valeurs superieures a une valeur donnee dans une colonne */
 int compter_superieur(COLONNE* col, COL_TYPE x) {
     int count = 0;
