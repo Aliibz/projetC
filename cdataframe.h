@@ -1,53 +1,72 @@
+/*
+Nom du projet : Gestion de DataFrame en C
+Auteurs : Ali Ibnou Zahir et Arthur Hacques
+Rôle : Ce fichier contient les déclarations des fonctions pour gérer un DataFrame en utilisant des listes doublement chaînées.
+*/
+
 #ifndef CDATAFRAME_H
 #define CDATAFRAME_H
 
-#include <stdlib.h>
-#include <stdio.h>
-#include "column.h"
+#include "colonne.h"
+#include "liste.h"
 
-typedef struct {
-    COLUMN** colonnes;
-    int nombre_colonnes;
-} CDataframe;
+typedef LISTE CDataframe;
 
-CDataframe* create_empty_dataframe(int nombre_colonnes);
+CDataframe* creer_dataframe_vide(int nombre_colonnes);
 
-void fill_dataframe_from_user_input(CDataframe* dataframe);
+void supprimer_dataframe(CDataframe **cdf);
 
-void fill_dataframe_with_predefined_values(CDataframe* dataframe);
+void supprimer_colonne_dataframe(CDataframe *cdf, char *nom_colonne);
 
-void print_dataframe(CDataframe* dataframe);
+int obtenir_taille_colonnes(CDataframe *cdf);
 
-void print_partial_rows(CDataframe* dataframe, int limite);
+void remplir_dataframe_utilisateur(CDataframe* dataframe);
 
-void print_partial_columns(CDataframe* dataframe, int limite);
+void remplir_dataframe_valeurs_predefinies(CDataframe* dataframe);
 
-void add_row(CDataframe* dataframe, COL_TYPE* values);
+void afficher_dataframe(CDataframe* dataframe);
 
-void remove_row(CDataframe* dataframe, int index);
+void afficher_lignes_partielles(CDataframe* dataframe, int limite);
 
-void add_column(CDataframe* dataframe, ENUM_TYPE type, const char* titre);
+void afficher_colonnes_partielles(CDataframe* dataframe, int limite);
 
-void remove_column(CDataframe* dataframe, int index);
+void ajouter_ligne(CDataframe* dataframe, COL_TYPE* valeurs);
 
-void rename_column(CDataframe* dataframe, int index, const char* new_title);
+void supprimer_ligne(CDataframe* dataframe, int index);
 
-int value_exists(CDataframe* dataframe, COL_TYPE value);
+void ajouter_colonne(CDataframe* dataframe, ENUM_TYPE type, const char* titre);
 
-COL_TYPE get_cell_value(CDataframe* dataframe, int row, int col);
+void renommer_colonne(CDataframe* dataframe, int index, const char* nouveau_titre);
 
-void set_cell_value(CDataframe* dataframe, int row, int col, COL_TYPE value);
+int valeur_existe(CDataframe* dataframe, COL_TYPE valeur);
 
-void print_column_names(CDataframe* dataframe);
+COL_TYPE obtenir_valeur_cellule(CDataframe* dataframe, int ligne, int col);
 
-void print_row_count(CDataframe* dataframe);
+void definir_valeur_cellule(CDataframe* dataframe, int ligne, int col, COL_TYPE valeur);
 
-void print_col_count(CDataframe* dataframe);
+void afficher_noms_colonnes(CDataframe* dataframe);
 
-void count_cells_equal_to_x(CDataframe* dataframe, COL_TYPE x);
+void afficher_nombre_lignes(CDataframe* dataframe);
 
-void count_cells_greater_than_x(CDataframe* dataframe, COL_TYPE x);
+void afficher_nombre_colonnes(CDataframe* dataframe);
 
-void count_cells_less_than_x(CDataframe* dataframe, COL_TYPE x);
+void compter_cellules_egales_a(CDataframe* dataframe, COL_TYPE x);
+
+void compter_cellules_superieures_a(CDataframe* dataframe, COL_TYPE x);
+
+void compter_cellules_inferieures_a(CDataframe* dataframe, COL_TYPE x);
+
+void effacer_index(COLONNE* col);
+
+int verifier_index(COLONNE* col);
+
+void mettre_a_jour_index(COLONNE* col);
+
+int rechercher_valeur_dans_colonne(COLONNE* col, void* val);
+
+void trier(COLONNE* col, int direction_tri);
+
+void afficher_colonne_par_index(COLONNE* col);
+
 
 #endif // CDATAFRAME_H
